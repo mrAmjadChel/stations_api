@@ -1,29 +1,28 @@
-const express = require('express');
-const pool = require('./db');
-const insertStations = require('./fetchStations');
-const cors = require('cors');
-const { swaggerUi, specs } = require('./swagger');
-require('dotenv').config();
+const express = require("express");
+const pool = require("./db");
+const insertStations = require("./fetchStations");
+const cors = require("cors");
+const { swaggerUi, specs } = require("./swagger");
+require("dotenv").config();
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-  origin: "*"
-}));
-
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 // Swagger
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
-
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use((req, res, next) => {
-  const key = req.headers['x-api-key'];
+  const key = req.headers["x-api-key"];
   if (!key || key !== process.env.API_KEY) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ error: "Unauthorized" });
   }
   next();
 });
-
 
 /**
  * @openapi
@@ -51,16 +50,15 @@ app.use((req, res, next) => {
  *         description: Failed to load stations
  */
 
-app.post('/stations/fetch', async (req, res) => {
+app.post("/stations/fetch", async (req, res) => {
   try {
     await insertStations();
-    res.json({ message: 'Stations loaded from API' });
+    res.json({ message: "Stations loaded from API" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to load stations' });
+    res.status(500).json({ error: "Failed to load stations" });
   }
 });
-
 
 /**
  * @openapi
@@ -114,28 +112,30 @@ app.post('/stations/fetch', async (req, res) => {
  *         description: Server error
  */
 
-app.get('/stations/near', async (req, res) => {
+app.get("/stations/near", async (req, res) => {
   try {
     const { lat, lng, limit } = req.query;
-    if (!lat || !lng) return res.status(400).json({ error: 'lat,lng required' });
+    if (!lat || !lng)
+      return res.status(400).json({ error: "lat,lng required" });
 
     const q = `
       SELECT name, en_name, ST_Y(geom::geometry) AS lat, ST_X(geom::geometry) AS lng,
              ST_Distance(geom, ST_SetSRID(ST_MakePoint($1,$2),4326)::geography) AS distance
       FROM stations
-      ORDER BY geom <-> ST_SetSRID(ST_MakePoint($1,$2),4326)::geography
+      ORDER BY distance
       LIMIT $3
     `;
-    const result = await pool.query(q, [parseFloat(lng), parseFloat(lat), parseInt(limit) || 10]);
+    const result = await pool.query(q, [
+      parseFloat(lng),
+      parseFloat(lat),
+      parseInt(limit) || 10,
+    ]);
     res.json(result.rows);
-
-    
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: "Server error" });
   }
 });
-
 
 /**
  * @openapi
@@ -195,10 +195,11 @@ app.get('/stations/near', async (req, res) => {
  *         description: Server error
  */
 
-app.get('/stations/near/paginate', async (req, res) => {
+app.get("/stations/near/paginate", async (req, res) => {
   try {
     const { lat, lng, limit, page } = req.query;
-    if (!lat || !lng) return res.status(400).json({ error: 'lat,lng required' });
+    if (!lat || !lng)
+      return res.status(400).json({ error: "lat,lng required" });
 
     const l = parseInt(limit) || 10;
     const p = parseInt(page) || 1;
@@ -208,15 +209,20 @@ app.get('/stations/near/paginate', async (req, res) => {
       SELECT name, en_name, ST_Y(geom::geometry) AS lat, ST_X(geom::geometry) AS lng,
              ST_Distance(geom, ST_SetSRID(ST_MakePoint($1,$2),4326)::geography) AS distance
       FROM stations
-      ORDER BY geom <-> ST_SetSRID(ST_MakePoint($1,$2),4326)::geography
+      ORDER BY distance
       LIMIT $3 OFFSET $4
     `;
-    const result = await pool.query(q, [parseFloat(lng), parseFloat(lat), l, offset]);
+    const result = await pool.query(q, [
+      parseFloat(lng),
+      parseFloat(lat),
+      l,
+      offset,
+    ]);
     res.json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: "Server error" });
   }
 });
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+app.listen(3000, () => console.log("Server running on port 3000"));
