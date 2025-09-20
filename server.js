@@ -1,18 +1,19 @@
 const express = require('express');
 const pool = require('./db');
 const insertStations = require('./fetchStations');
+const cors = require('cors');
 const { swaggerUi, specs } = require('./swagger');
 require('dotenv').config();
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 
 // Swagger
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 
-// Middleware
 app.use((req, res, next) => {
   const key = req.headers['x-api-key'];
   if (!key || key !== process.env.API_KEY) {
