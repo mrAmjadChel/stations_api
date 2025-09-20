@@ -1,0 +1,21 @@
+CREATE TABLE public.stations (
+  id SERIAL PRIMARY KEY,
+  station_code INT NOT NULL,
+  name TEXT,
+  en_name TEXT,
+  th_short TEXT,
+  en_short TEXT,
+  chname TEXT,
+  controldivision INT,
+  exact_km NUMERIC,
+  exact_distance NUMERIC,
+  km NUMERIC,
+  class INT,
+  lat DOUBLE PRECISION,
+  lng DOUBLE PRECISION,
+  active INT,
+  giveway INT,
+  dual_track INT,
+  comment TEXT,
+  geom geography(Point, 4326)
+);
