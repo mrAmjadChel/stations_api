@@ -24,31 +24,6 @@ app.use((req, res, next) => {
   next();
 });
 
-/**
- * @openapi
- * /stations/fetch:
- *   post:
- *     summary: Load station data from external API to DB
- *     tags:
- *       - Stations
- *     security:
- *       - ApiKeyAuth: []
- *     responses:
- *       200:
- *         description: Stations loaded successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Stations loaded from API"
- *       401:
- *         description: Unauthorized
- *       500:
- *         description: Failed to load stations
- */
 
 app.post("/stations/fetch", async (req, res) => {
   try {
