@@ -11,7 +11,7 @@ const options = {
     },
     servers: [
       { url: 'http://localhost:3000', description: 'Local dev' },
-      { url: 'https://stations-api-i4uo.onrender.com', description: 'Production' }
+      { url: 'https://stations-api-mi8d.onrender.com', description: 'Production' }
     ],
     components: {
       securitySchemes: {
