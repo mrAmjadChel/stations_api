@@ -13,6 +13,9 @@ app.use(
   })
 );
 
+// Health Check
+app.get('/health', (req, res) => res.send("OK"));
+
 // Swagger
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
 
