@@ -20,7 +20,7 @@
 1. Clone repository:
 
 ```bash
-git clone https://github.com/yourusername/stations_api.git
+git clone https://github.com/mrAmjadChel/stations_api
 cd stations_api
 
 npm install
