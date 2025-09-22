@@ -1,6 +1,6 @@
 CREATE TABLE public.stations (
   id SERIAL PRIMARY KEY,
-  station_code INT NOT NULL,
+  station_code INT NOT NULL UNIQUE,
   name TEXT,
   en_name TEXT,
   th_short TEXT,
